@@ -42,7 +42,7 @@ export default function App() {
     defaultValues: { test: "" }, //*isDirty 를 위한 defaultValue setting
   });
   //* 위의 submit 말고 또 다른 submit 을 하고 싶다면 이를 따로 위와같이 새로운 control 등을 만들어 관리해야함
-  //?
+  //?제가 위에서 써놓은 설명이 맞나요? ㅎㅎ...
 
   //*test_with_register 의 submit 관리
   const {
@@ -169,7 +169,7 @@ export default function App() {
           title="submit"
           //disabled={!isDirty} //* 입력창 중 하나라도 입력이 되면 abled -> not good
           // disabled={
-          //   !dirtyFields.email || !dirtyFields.name || !dirtyFields.password
+          //*   !dirtyFields.email || !dirtyFields.name || !dirtyFields.password
           // } //* 입력창의 모든 필드(네임, 이메일, 패스워드)가 입력이 있어야 abled -> validation 못잡음. not enough
           disabled={!isValid} //* 이거 하나만으로 충분. 위와 합칠 필요 없음. isValid 는 기본적으로 False 로 시작하기 때문에 첫 렌더링 화면에서 아무 입력도 없을때 submit 버튼은 활성화 되지 않음
           onPress={handleSubmit(onSubmit)}
@@ -243,7 +243,7 @@ export default function App() {
         </View>
 
         {/* //* 2nd try : controller 안쓰고 register 로 만들어보기 */}
-        {/* //? 뭘 하는건지 모르겠다... ㅎㅎ  */}
+        {/* //? 공식문서 따라해보기,, 뭘 하는건지 모르겠다... ㅎㅎ  */}
         <View style={styles.inside_container}>
           <Text style={styles.title}>test_with_register2</Text>
           <TextInput
