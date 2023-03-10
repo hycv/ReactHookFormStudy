@@ -1,95 +1,120 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
+import { useForm, Controller } from "react-hook-form";
+
+type UserInfoForm = {
+  name: string;
+  email: string;
+  password: string;
+};
 
 export default function App() {
-  const [name, onChangeName] = useState("");
-  const [email, onChangeEmail] = useState("");
-  const [password, onChangePassword] = useState("");
-
-  //*username 검증
-  const nameCheck = (name) => {
-    if (name.length < 1) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  //*email 검증
-  const emailCheck = (email) => {
-    if (
-      email.length < 1 ||
-      !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  //*password 검증
-  const passwordCheck = (password) => {
-    if (!/^.*[^a-zA-Z0-9].*$/.test(password) || password.length < 5) {
-      return false;
-    } else {
-      return true;
-    }
-  };
+  //?const { control, handleSubmit, formState: { errors } } = useForm<UserInfoForm>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
 
   //*submit 버튼
-  const onSubmit = () => {
+  const onSubmit = (data: UserInfoForm) => {
     Alert.alert("submitted!");
-    onChangeEmail(""), onChangeName(""), onChangePassword("");
+    reset();
+    //onChangeEmail(""), onChangeName(""), onChangePassword("");
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.inside_container}>
         <Text style={styles.title}>name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={"홍길동"}
-          onChangeText={onChangeName}
-          value={name}
-          autoCapitalize="none"
+        <Controller
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              placeholder={"예시 : 홍길동"}
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize="none"
+            />
+          )}
+          name="name"
+          rules={{ required: "name required" }}
         />
-        {!nameCheck(name) && <Text style={styles.warning}>name unvalid</Text>}
+        {errors.name && (
+          <Text style={styles.warning}>{errors.name.message}</Text>
+        )}
       </View>
       <View style={styles.inside_container}>
         <Text style={styles.title}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={"hong123@gmail.com"}
-          onChangeText={onChangeEmail}
-          value={email}
-          autoCapitalize="none"
+        <Controller
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              placeholder={"hong123@gmail.com"}
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize="none"
+            />
+          )}
+          name="email"
+          rules={{
+            required: "email required",
+            pattern: {
+              value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+              message: "invalid email",
+            },
+          }}
         />
-        {!emailCheck(email) && (
-          <Text style={styles.warning}>email unvalid</Text>
+        {errors.email && (
+          <Text style={styles.warning}>{errors.email.message}</Text>
         )}
       </View>
       <View style={styles.inside_container}>
         <Text style={styles.title}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={"5자 이상, 특수기호 하나 이상 포함"}
-          onChangeText={onChangePassword}
-          value={password}
-          secureTextEntry
-          autoCapitalize="none"
+        <Controller
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              placeholder={"5자 이상, 특수기호 하나 이상 포함"}
+              onChangeText={onChange}
+              value={value}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+          )}
+          name="password"
+          rules={{
+            required: "password required",
+            pattern: {
+              value: /^.*[^a-zA-Z0-9].*$/,
+              message: "invalid password",
+            },
+            minLength: {
+              value: 5,
+              message: "password : at least 5 characters",
+            },
+          }}
         />
-        {!passwordCheck(password) && (
-          <Text style={styles.warning}>password unvalid</Text>
+        {errors.password && (
+          <Text style={styles.warning}>{errors.password.message}</Text>
         )}
       </View>
 
       <Button
         title="submit"
-        disabled={
-          !nameCheck(name) || !emailCheck(email) || !passwordCheck(password)
-        }
-        onPress={onSubmit}
+        disabled={errors.password || errors.email || errors.name}
+        onPress={handleSubmit(onSubmit)}
       />
 
       <StatusBar style="auto" />
